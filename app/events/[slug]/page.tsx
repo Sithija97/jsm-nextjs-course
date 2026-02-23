@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Calendar, Clock, MapPin, Users, Globe } from "lucide-react";
 import { notFound } from "next/navigation";
+import BookEvent from "@/components/common/book-event";
 
 interface IProps {
   params: Promise<{ slug: string }>;
@@ -64,49 +65,63 @@ const EventDetailsPage = async ({ params }: IProps) => {
     organizer,
   } = data.event;
 
+  const bookings = 10; // Placeholder for number of bookings, replace with actual data when available
+
   return (
-    <section id="event">
-      <div>
-        <h1>Event Description</h1>
-        <p>{description}</p>
-      </div>
-
-      <div>
-        <div>
-          <Image
-            src={image}
-            alt="Event Banner"
-            width={800}
-            height={800}
-            className="banner"
-          />
-
-          <section className="flex-col-gap-2">
-            <h2>Overview</h2>
-            <p>{overview}</p>
-          </section>
-
-          <section className="flex-col-gap-2">
-            <h2>Event Details</h2>
-
-            <EventDetailItem icon={<Calendar size={17} />} label={date} />
-            <EventDetailItem icon={<Clock size={17} />} label={time} />
-            <EventDetailItem icon={<MapPin size={17} />} label={location} />
-            <EventDetailItem icon={<Globe size={17} />} label={mode} />
-            <EventDetailItem icon={<Users size={17} />} label={audience} />
-          </section>
-
-          <EventAgenda agendaItems={agenda} />
-
-          <section className="flex-col-gap-2">
-            <h2>About the Organizer</h2>
-            <p>{organizer}</p>
-          </section>
-
-          <EventTags tags={tags} />
+    <section id="event" className="py-12 bg-background">
+      <div className="mx-auto max-w-6xl px-4 grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Main Content */}
+        <div className="lg:col-span-2 flex flex-col gap-8">
+          <div className="rounded-xl overflow-hidden border bg-card shadow-sm">
+            {image && (
+              <Image
+                src={image}
+                alt="Event Banner"
+                width={800}
+                height={400}
+                className="w-full h-72 object-cover"
+                priority
+              />
+            )}
+            <div className="p-6 flex flex-col gap-6">
+              <h1 className="text-3xl font-bold tracking-tight mb-2">{description}</h1>
+              <section className="flex flex-col gap-2">
+                <h2 className="text-xl font-semibold">Overview</h2>
+                <p className="text-muted-foreground">{overview}</p>
+              </section>
+              <section className="flex flex-col gap-2">
+                <h2 className="text-xl font-semibold">Event Details</h2>
+                <div className="flex flex-wrap gap-4">
+                  <EventDetailItem icon={<Calendar size={20} />} label={date} />
+                  <EventDetailItem icon={<Clock size={20} />} label={time} />
+                  <EventDetailItem icon={<MapPin size={20} />} label={location} />
+                  <EventDetailItem icon={<Globe size={20} />} label={mode} />
+                  <EventDetailItem icon={<Users size={20} />} label={audience} />
+                </div>
+              </section>
+              <EventAgenda agendaItems={agenda} />
+              <section className="flex flex-col gap-2">
+                <h2 className="text-xl font-semibold">About the Organizer</h2>
+                <p className="text-muted-foreground">{organizer}</p>
+              </section>
+              <EventTags tags={tags} />
+            </div>
+          </div>
         </div>
-        {/*    Right Side - Booking Form */}
-        as
+        {/* Booking Form Side Card */}
+        <aside className="lg:col-span-1">
+          <div className="sticky top-24 rounded-xl border bg-card shadow-sm p-6 flex flex-col gap-4">
+            <h2 className="text-xl font-semibold mb-2">Book Your Spot</h2>
+            {bookings > 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Join {bookings} people who have already booked their spot!
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">Be the first to book your spot!</p>
+            )}
+            <BookEvent />
+          </div>
+        </aside>
       </div>
     </section>
   );
