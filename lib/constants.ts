@@ -18,7 +18,7 @@ export const events: EventItem[] = [
   },
   {
     image: "/images/event2.png",
-    title: "KubeCon + CloudNativeCon Europe 2026",
+    title: "KubeCon + CloudNativeCon Europe",
     slug: "kubecon-cloudnativecon-eu-2026",
     location: "Vienna, Austria",
     date: "2026-03-18",
@@ -55,14 +55,6 @@ export const events: EventItem[] = [
     location: "Paris, France",
     date: "2026-07-10",
     time: "10:00 AM",
-  },
-  {
-    image: "/images/events-full.png",
-    title: "Open Source Summit North America 2026",
-    slug: "oss-na-2026",
-    location: "Vancouver, Canada",
-    date: "2026-06-22",
-    time: "09:00 AM",
   },
 ];
 

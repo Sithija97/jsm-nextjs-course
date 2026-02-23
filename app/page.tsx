@@ -1,8 +1,13 @@
 import EventCard from "@/components/common/event-card";
 import { Button } from "@/components/ui/button";
-import { events } from "@/lib/constants";
+import { IEvent } from "@/database/event.model";
 
-export default function Home() {
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+export default async function Home() {
+  const response = await fetch(`${BASE_URL}/api/events`);
+  const { events } = await response.json();
+
   return (
     <div className="min-h-screen">
       {/* Hero/Banner Section */}
@@ -39,11 +44,13 @@ export default function Home() {
           </div>
 
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <li key={event.title} className="group">
-                <EventCard {...event} />
-              </li>
-            ))}
+            {events &&
+              events?.length > 0 &&
+              events.map((event: IEvent) => (
+                <li key={event.title} className="group">
+                  <EventCard {...event} />
+                </li>
+              ))}
           </ul>
         </div>
       </section>
