@@ -22,16 +22,31 @@ const EventDetailItem = ({
   </div>
 );
 
-const EventAgenda = ({ agendaItems }: { agendaItems: string[] }) => (
-  <div className="agenda">
-    <h2>Agenda</h2>
-    <ul>
-      {agendaItems.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
-  </div>
-);
+const EventAgenda = ({ agendaItems }: { agendaItems: string[] }) => {
+  // If agendaItems is a single string with commas, split it
+  let items: string[] = [];
+  if (
+    agendaItems.length === 1 &&
+    typeof agendaItems[0] === "string" &&
+    agendaItems[0].includes(",")
+  ) {
+    items = agendaItems[0].split(",").map((s) => s.trim());
+  } else {
+    items = agendaItems;
+  }
+  return (
+    <div className="flex flex-col gap-3 mt-2">
+      <h2 className="text-lg font-semibold mb-1">Agenda</h2>
+      <ul className="flex flex-col gap-2 list-disc list-inside pl-2">
+        {items.map((item, idx) => (
+          <li key={idx} className="text-sm text-foreground/90 pl-1">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 const EventTags = ({ tags }: { tags: string[] }) => (
   <div className="flex flex-row gap-1.5 flex-wrap">
@@ -84,7 +99,9 @@ const EventDetailsPage = async ({ params }: IProps) => {
               />
             )}
             <div className="p-6 flex flex-col gap-6">
-              <h1 className="text-3xl font-bold tracking-tight mb-2">{description}</h1>
+              <h1 className="text-3xl font-bold tracking-tight mb-2">
+                {description}
+              </h1>
               <section className="flex flex-col gap-2">
                 <h2 className="text-xl font-semibold">Overview</h2>
                 <p className="text-muted-foreground">{overview}</p>
@@ -94,9 +111,15 @@ const EventDetailsPage = async ({ params }: IProps) => {
                 <div className="flex flex-wrap gap-4">
                   <EventDetailItem icon={<Calendar size={20} />} label={date} />
                   <EventDetailItem icon={<Clock size={20} />} label={time} />
-                  <EventDetailItem icon={<MapPin size={20} />} label={location} />
+                  <EventDetailItem
+                    icon={<MapPin size={20} />}
+                    label={location}
+                  />
                   <EventDetailItem icon={<Globe size={20} />} label={mode} />
-                  <EventDetailItem icon={<Users size={20} />} label={audience} />
+                  <EventDetailItem
+                    icon={<Users size={20} />}
+                    label={audience}
+                  />
                 </div>
               </section>
               <EventAgenda agendaItems={agenda} />
@@ -117,7 +140,9 @@ const EventDetailsPage = async ({ params }: IProps) => {
                 Join {bookings} people who have already booked their spot!
               </p>
             ) : (
-              <p className="text-sm text-muted-foreground">Be the first to book your spot!</p>
+              <p className="text-sm text-muted-foreground">
+                Be the first to book your spot!
+              </p>
             )}
             <BookEvent />
           </div>
