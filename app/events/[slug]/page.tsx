@@ -149,7 +149,7 @@ const EventDetailsPage = async ({ params }: IProps) => {
                 Be the first to book your spot!
               </p>
             )}
-            <BookEvent />
+            <BookEvent eventId={data.event._id} slug={slug} />
           </div>
         </aside>
       </div>

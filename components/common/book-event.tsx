@@ -1,13 +1,28 @@
 "use client";
 
+import { createBooking } from "@/lib/actions/booking.actions";
 import { useState } from "react";
 
-const BookEvent = () => {
+interface IProps {
+  eventId: string;
+  slug: string;
+}
+
+const BookEvent = ({ eventId, slug }: IProps) => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { success, error } = await createBooking({ eventId, slug, email });
+
+    if (success) {
+      setSubmitted(true);
+      console.log("Booking successful");
+    } else {
+      console.error("Booking failed", error);
+      return;
+    }
 
     setTimeout(() => {
       setSubmitted(true);
