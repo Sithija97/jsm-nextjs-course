@@ -8,16 +8,14 @@ export async function POST(req: NextRequest) {
     await connectDB();
 
     const formData = await req.formData();
+
     let event;
 
     try {
       event = Object.fromEntries(formData.entries());
-    } catch (error) {
+    } catch (e) {
       return NextResponse.json(
-        {
-          message: "Invalid form data",
-          error: error instanceof Error ? error.message : "Unknown error",
-        },
+        { message: "Invalid JSON data format" },
         { status: 400 },
       );
     }
@@ -30,6 +28,9 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
 
+    let tags = JSON.parse(formData.get("tags") as string);
+    let agenda = JSON.parse(formData.get("agenda") as string);
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
@@ -37,9 +38,10 @@ export async function POST(req: NextRequest) {
       cloudinary.uploader
         .upload_stream(
           { resource_type: "image", folder: "events" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
+          (error, results) => {
+            if (error) return reject(error);
+
+            resolve(results);
           },
         )
         .end(buffer);
@@ -47,19 +49,21 @@ export async function POST(req: NextRequest) {
 
     event.image = (uploadResult as { secure_url: string }).secure_url;
 
-    const createdEvent = await Event.create(event);
+    const createdEvent = await Event.create({
+      ...event,
+      tags: tags,
+      agenda: agenda,
+    });
+
     return NextResponse.json(
-      {
-        message: "Event created successfully",
-        event: createdEvent,
-      },
+      { message: "Event created successfully", event: createdEvent },
       { status: 201 },
     );
   } catch (error) {
     console.error("Error creating event:", error);
     return NextResponse.json(
       {
-        message: "Failed to create event",
+        message: "Event Creation Failed",
         error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },

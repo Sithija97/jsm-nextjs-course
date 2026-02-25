@@ -2,6 +2,9 @@ import Image from "next/image";
 import { Calendar, Clock, MapPin, Users, Globe } from "lucide-react";
 import { notFound } from "next/navigation";
 import BookEvent from "@/components/common/book-event";
+import { IEvent } from "@/database/event.model";
+import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
+import EventCard from "@/components/common/event-card";
 
 interface IProps {
   params: Promise<{ slug: string }>;
@@ -82,6 +85,8 @@ const EventDetailsPage = async ({ params }: IProps) => {
 
   const bookings = 10; // Placeholder for number of bookings, replace with actual data when available
 
+  const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
+
   return (
     <section id="event" className="py-12 bg-background">
       <div className="mx-auto max-w-6xl px-4 grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -147,6 +152,26 @@ const EventDetailsPage = async ({ params }: IProps) => {
             <BookEvent />
           </div>
         </aside>
+      </div>
+
+      <div className="w-full flex flex-col gap-6 pt-20 max-w-6xl mx-auto px-4">
+        <h2 className="text-2xl font-semibold mb-2">Similar Events</h2>
+        {similarEvents.length > 0 ? (
+          <div className="relative">
+            <div className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-thin scrollbar-thumb-muted/40 scrollbar-track-transparent">
+              {similarEvents.map((similarEvent: IEvent) => (
+                <div
+                  key={similarEvent.title}
+                  className="min-w-[320px] max-w-xs snap-center"
+                >
+                  <EventCard {...similarEvent} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="text-muted-foreground">No similar events found.</p>
+        )}
       </div>
     </section>
   );
